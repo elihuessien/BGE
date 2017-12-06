@@ -55,7 +55,7 @@ bool PhysicsGame1::Initialise()
 	shared_ptr<PhysicsController> wheel = physicsFactory->CreateSphere(0.5, glm::vec3(x, y, z+7), glm::angleAxis(90.f, glm::vec3(0, 0, 1)));
 	wheel->transform->diffuse = White;
 	btHingeConstraint * frontwheel = new btHingeConstraint(*head->rigidBody, *wheel->rigidBody, btVector3(0, 0, 4), btVector3(0, 0, 0), btVector3(0, 0, 0), btVector3(0, 0.001, 0), true);
-	frontwheel->setLimit(0, 0.001);
+	frontwheel->setLimit(0, 0.1);
 	dynamicsWorld->addConstraint(frontwheel);
 
 	/*Other idea for dynamic steering wheel
