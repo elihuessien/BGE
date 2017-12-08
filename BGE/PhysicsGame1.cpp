@@ -18,9 +18,11 @@
 using namespace BGE;
 
 //TODO floats x, y, z and speed;
-float x, y, z, speed, rotation;
+float x, y, z, speed, rotation = 90;
 float maxRotation = 100.f;
 float minRotation = 80.f;
+int height = 3;
+int width = 7 ;
 
 PhysicsGame1::PhysicsGame1(void)
 {
@@ -44,8 +46,12 @@ bool PhysicsGame1::Initialise()
 	glm::vec3 Black(0, 0, 0);
 	glm::vec3 White(2.5f, 1.f, 0.5f);
 	glm::vec3 Red(2.5f, 0.5f, 0);
+	glm::vec3 Red2(2.5f, 0, 0);
 	glm::vec3 Yellow(2.5f, 2.5f, 0);
 	x = 0; y = 6; z = -3; speed = 500;
+
+
+	
 
 	//create the head
 	btTransform t1, t2;
@@ -55,7 +61,7 @@ bool PhysicsGame1::Initialise()
 	shared_ptr<PhysicsController> wheel = physicsFactory->CreateSphere(0.5, glm::vec3(x, y, z+7), glm::angleAxis(90.f, glm::vec3(0, 0, 1)));
 	wheel->transform->diffuse = White;
 	btHingeConstraint * frontwheel = new btHingeConstraint(*head->rigidBody, *wheel->rigidBody, btVector3(0, 0, 4), btVector3(0, 0, 0), btVector3(0, 0, 0), btVector3(0, 0.001, 0), true);
-	frontwheel->setLimit(0, 0.1);
+	frontwheel->setLimit(0, 0.001);
 	dynamicsWorld->addConstraint(frontwheel);
 
 	/*Other idea for dynamic steering wheel
@@ -99,6 +105,7 @@ bool PhysicsGame1::Initialise()
 
 	//create seat
 	shared_ptr<PhysicsController> chair = physicsFactory->CreateBox(1, 1, 2, glm::vec3(x, y-1, z - 2), glm::quat());
+	chair->transform->diffuse = Red2;
 	t1.setIdentity();
 	t2.setIdentity();
 	t1.setOrigin(btVector3(0, -1, -5));
@@ -171,7 +178,13 @@ bool PhysicsGame1::Initialise()
 	dynamicsWorld->addConstraint(leftjoint);
 	dynamicsWorld->addConstraint(rightjoint);
 
-
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			shared_ptr<PhysicsController> tower = physicsFactory->CreateBox(1, 1, 1, glm::vec3(x +(j*1), 1 + (i * 1), z + 15), glm::quat());
+		}
+	}
 
 	if (!Game::Initialise()) {
 		return false;
@@ -185,7 +198,6 @@ bool PhysicsGame1::Initialise()
 void BGE::PhysicsGame1::Update(float timeDelta)
 {
 	//code for rotating the steering wheel
-	rotation = 90.f;
 
 	if (keyState[SDL_SCANCODE_LEFT])
 	{
